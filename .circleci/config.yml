@@ -95,9 +95,10 @@ jobs:
     executor: ruby/default
     parallelism: 2
     steps:
-      - browser-tools/install-chrome:
-          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
-          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install_browser_tools
+      - browser-tools/install-chrome
+          # chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          # replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
       - browser-tools/install-chromedriver
       - checkout
       - restore_cache: *restore_bundler_cache
@@ -148,9 +149,9 @@ jobs:
     executor: ruby/default
     parallelism: 2
     steps:
-      - browser-tools/install-chrome:
-          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
-          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chrome
+          # chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          # replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
       - browser-tools/install-chromedriver
       - checkout
       - restore_cache: *restore_bundler_cache
@@ -203,9 +204,9 @@ jobs:
     executor: ruby/default
     parallelism: 7
     steps:
-      - browser-tools/install-chrome:
-          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
-          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chrome
+          #chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          #replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
       - browser-tools/install-chromedriver
       - checkout
 
@@ -255,9 +256,9 @@ jobs:
     executor: ruby/default
     parallelism: 2
     steps:
-      - browser-tools/install-chrome:
-          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
-          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chrome
+          # chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          # replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
       - browser-tools/install-chromedriver
       - checkout
       - restore_cache: *restore_bundler_cache
@@ -310,9 +311,9 @@ jobs:
     parallelism: 2
 
     steps:
-      - browser-tools/install-chrome:
-          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
-          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chrome
+          # chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          # replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
       - browser-tools/install-chromedriver
       - checkout
       - restore_cache: *restore_bundler_cache
