@@ -116,22 +116,22 @@ jobs:
 
       - *wait_for_docker
 
-      - run:
-          name: Run tests with Knapsack Pro
-          command: |
-            export RAILS_ENV=test
-            bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
-          environment:
-            KNAPSACK_PRO_CI_NODE_TOTAL: 2
+      # - run:
+      #     name: Run tests with Knapsack Pro
+      #     command: |
+      #       export RAILS_ENV=test
+      #       bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
+      #     environment:
+      #       KNAPSACK_PRO_CI_NODE_TOTAL: 2
 
       # If you don't want to use Knapsack Pro, then use this configuration:
       #
-      # - run:
-      #     name: Run unit tests
-      #     command: bundle exec rails test
-      # - run:
-      #     name: Run system tests
-      #     command: bundle exec rails test:system
+      - run:
+          name: Run unit tests
+          command: bundle exec rails test
+      - run:
+          name: Run system tests
+          command: bundle exec rails test:system
 
       - store_test_results:
           path: test/reports
@@ -168,23 +168,23 @@ jobs:
 
       - *wait_for_docker
 
-      - run:
-          name: Run tests with Knapsack Pro
-          command: |
-            export RAILS_ENV=test
-            bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
-          environment:
-            KNAPSACK_PRO_CI_NODE_TOTAL: 2
-            HIDE_THINGS: true
+      # - run:
+      #     name: Run tests with Knapsack Pro
+      #     command: |
+      #       export RAILS_ENV=test
+      #       bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
+      #     environment:
+      #       KNAPSACK_PRO_CI_NODE_TOTAL: 2
+      #       HIDE_THINGS: true
 
       # If you don't want to use Knapsack Pro, then use this configuration:
       #
-      # - run:
-      #     name: Run unit tests with HIDE_THINGS
-      #     command: HIDE_THINGS=true bundle exec rails test
-      # - run:
-      #     name: Run system tests with HIDE_THINGS
-      #     command: HIDE_THINGS=true bundle exec rails test:system
+      - run:
+          name: Run unit tests with HIDE_THINGS
+          command: HIDE_THINGS=true bundle exec rails test
+      - run:
+          name: Run system tests with HIDE_THINGS
+          command: HIDE_THINGS=true bundle exec rails test:system
 
       - store_test_results:
           path: test/reports
