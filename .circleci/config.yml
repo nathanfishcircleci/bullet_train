@@ -78,7 +78,7 @@ jobs:
       - restore_cache: *restore_bundler_cache
 
       # Install dependencies
-      - ruby/bundle-install
+      - run: bundle install
 
       - run:
           name: Running rails db:migrate shouldn't cause changes
@@ -109,7 +109,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - ruby/bundle-install
+      - run: bundle install
       - run: bin/link
       - run: yarn install
       - run: yarn build
@@ -162,7 +162,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - ruby/bundle-install
+      - run: bundle install
       - run: bundle clean --force
       - run: bundle exec rake bt:link
       - run: yarn install
@@ -219,7 +219,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - ruby/bundle-install
+      - run: bundle install
       - run: bin/link
       - run: yarn install
       - run: yarn build
@@ -269,7 +269,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - ruby/bundle-install
+      - run: bundle install
       - run: bin/link
       - run: yarn install
       - run: yarn build
@@ -324,7 +324,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - ruby/bundle-install
+      - run: bundle install
       - run: bin/link
       - run: yarn install
       - run: yarn build
