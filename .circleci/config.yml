@@ -53,7 +53,7 @@ jobs:
       - restore_cache: *restore_yarn_cache
 
       # Install dependencies
-      - ruby/bundle-install
+      - run: bundle install
       - run: bundle clean --force
       - run: yarn install
 
