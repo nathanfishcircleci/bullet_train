@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
-  ruby: circleci/ruby@2.5.3
-  browser-tools: circleci/browser-tools@2.0.0
+  ruby: circleci/ruby@0.1.2
+  browser-tools: circleci/browser-tools@1.4.4
 aliases:
   - &restore_bundler_cache
       name: Restore Bundler cache
@@ -26,13 +26,13 @@ aliases:
       paths:
         - node_modules
   - &ruby_node_browsers_docker_image
-      - image: cimg/ruby:3.4.4-browsers
+      - image: cimg/ruby:3.4.3-browsers
         environment:
           PGHOST: localhost
           PGUSER: untitled_application
           RAILS_ENV: test
   - &postgres_docker_image
-      - image: cimg/postgres:17.5
+      - image: cimg/postgres:14.2
         environment:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: untitled_application_test
@@ -53,7 +53,7 @@ jobs:
       - restore_cache: *restore_yarn_cache
 
       # Install dependencies
-      - run: bundle install
+      - ruby/bundle-install
       - run: bundle clean --force
       - run: yarn install
 
@@ -70,7 +70,7 @@ jobs:
     docker:
       - <<: *ruby_node_browsers_docker_image
       - <<: *postgres_docker_image
-      - image: cimg/redis:7.2
+      - image: cimg/redis:6.2.6
     executor: ruby/default
     parallelism: 1
     steps:
@@ -78,7 +78,7 @@ jobs:
       - restore_cache: *restore_bundler_cache
 
       # Install dependencies
-      - run: bundle install
+      - ruby/bundle-install
 
       - run:
           name: Running rails db:migrate shouldn't cause changes
@@ -91,13 +91,14 @@ jobs:
     docker:
       - <<: *ruby_node_browsers_docker_image
       - <<: *postgres_docker_image
-      - image: cimg/redis:7.2
+      - image: cimg/redis:6.2.6
     executor: ruby/default
     parallelism: 2
     steps:
-      - browser-tools/install_browser_tools
-      - browser-tools/install_chrome
-      - browser-tools/install_chromedriver
+      - browser-tools/install-chrome:
+          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chromedriver
       - checkout
       - restore_cache: *restore_bundler_cache
       - restore_cache: *restore_yarn_cache
@@ -108,7 +109,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - run: bundle install
+      - ruby/bundle-install
       - run: bin/link
       - run: yarn install
       - run: yarn build
@@ -116,22 +117,22 @@ jobs:
 
       - *wait_for_docker
 
-      # - run:
-      #     name: Run tests with Knapsack Pro
-      #     command: |
-      #       export RAILS_ENV=test
-      #       bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
-      #     environment:
-      #       KNAPSACK_PRO_CI_NODE_TOTAL: 2
+      - run:
+          name: Run tests with Knapsack Pro
+          command: |
+            export RAILS_ENV=test
+            bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
+          environment:
+            KNAPSACK_PRO_CI_NODE_TOTAL: 2
 
       # If you don't want to use Knapsack Pro, then use this configuration:
       #
-      - run:
-          name: Run unit tests
-          command: bundle exec rails test
-      - run:
-          name: Run system tests
-          command: bundle exec rails test:system
+      # - run:
+      #     name: Run unit tests
+      #     command: bundle exec rails test
+      # - run:
+      #     name: Run system tests
+      #     command: bundle exec rails test:system
 
       - store_test_results:
           path: test/reports
@@ -143,12 +144,14 @@ jobs:
     docker:
       - <<: *ruby_node_browsers_docker_image
       - <<: *postgres_docker_image
-      - image: cimg/redis:7.2
+      - image: circleci/redis
     executor: ruby/default
     parallelism: 2
     steps:
-      - browser-tools/install_chrome
-      - browser-tools/install_chromedriver
+      - browser-tools/install-chrome:
+          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chromedriver
       - checkout
       - restore_cache: *restore_bundler_cache
       - restore_cache: *restore_yarn_cache
@@ -159,7 +162,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - run: bundle install
+      - ruby/bundle-install
       - run: bundle clean --force
       - run: bundle exec rake bt:link
       - run: yarn install
@@ -168,23 +171,23 @@ jobs:
 
       - *wait_for_docker
 
-      # - run:
-      #     name: Run tests with Knapsack Pro
-      #     command: |
-      #       export RAILS_ENV=test
-      #       bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
-      #     environment:
-      #       KNAPSACK_PRO_CI_NODE_TOTAL: 2
-      #       HIDE_THINGS: true
+      - run:
+          name: Run tests with Knapsack Pro
+          command: |
+            export RAILS_ENV=test
+            bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
+          environment:
+            KNAPSACK_PRO_CI_NODE_TOTAL: 2
+            HIDE_THINGS: true
 
       # If you don't want to use Knapsack Pro, then use this configuration:
       #
-      - run:
-          name: Run unit tests with HIDE_THINGS
-          command: HIDE_THINGS=true bundle exec rails test
-      - run:
-          name: Run system tests with HIDE_THINGS
-          command: HIDE_THINGS=true bundle exec rails test:system
+      # - run:
+      #     name: Run unit tests with HIDE_THINGS
+      #     command: HIDE_THINGS=true bundle exec rails test
+      # - run:
+      #     name: Run system tests with HIDE_THINGS
+      #     command: HIDE_THINGS=true bundle exec rails test:system
 
       - store_test_results:
           path: test/reports
@@ -196,12 +199,14 @@ jobs:
     docker:
       - <<: *ruby_node_browsers_docker_image
       - <<: *postgres_docker_image
-      - image: cimg/redis:7.2
+      - image: cimg/redis:6.2.6
     executor: ruby/default
     parallelism: 7
     steps:
-      - browser-tools/install_chrome
-      - browser-tools/install_chromedriver
+      - browser-tools/install-chrome:
+          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chromedriver
       - checkout
 
       # Restore dependency caches
@@ -214,7 +219,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - run: bundle install
+      - ruby/bundle-install
       - run: bin/link
       - run: yarn install
       - run: yarn build
@@ -246,12 +251,14 @@ jobs:
     docker:
       - <<: *ruby_node_browsers_docker_image
       - <<: *postgres_docker_image
-      - image: cimg/redis:7.2
+      - image: cimg/redis:6.2.6
     executor: ruby/default
     parallelism: 2
     steps:
-      - browser-tools/install_chrome
-      - browser-tools/install_chromedriver
+      - browser-tools/install-chrome:
+          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chromedriver
       - checkout
       - restore_cache: *restore_bundler_cache
       - restore_cache: *restore_yarn_cache
@@ -262,7 +269,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - run: bundle install
+      - ruby/bundle-install
       - run: bin/link
       - run: yarn install
       - run: yarn build
@@ -298,13 +305,15 @@ jobs:
     docker:
       - <<: *ruby_node_browsers_docker_image
       - <<: *postgres_docker_image
-      - image: cimg/redis:7.2
+      - image: cimg/redis:6.2.6
     executor: ruby/default
     parallelism: 2
 
     steps:
-      - browser-tools/install_chrome
-      - browser-tools/install_chromedriver
+      - browser-tools/install-chrome:
+          chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+          replace-existing: true # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chromedriver
       - checkout
       - restore_cache: *restore_bundler_cache
       - restore_cache: *restore_yarn_cache
@@ -315,7 +324,7 @@ jobs:
             - run: ./.circleci/checkout-and-link-core-repo
 
       # Install dependencies
-      - run: bundle install
+      - ruby/bundle-install
       - run: bin/link
       - run: yarn install
       - run: yarn build
@@ -343,12 +352,12 @@ workflows:
       - 'Minitest':
           name: 'Release: Minitest'
           use-core-repo: false
-#      - 'Minitest with HIDE_THINGS':
-#          name: 'Core: Minitest with HIDE_THINGS'
-#          use-core-repo: true
-#      - 'Minitest with HIDE_THINGS':
-#          name: 'Release: Minitest with HIDE_THINGS'
-#          use-core-repo: false
+      - 'Minitest with HIDE_THINGS':
+          name: 'Core: Minitest with HIDE_THINGS'
+          use-core-repo: true
+      - 'Minitest with HIDE_THINGS':
+          name: 'Release: Minitest with HIDE_THINGS'
+          use-core-repo: false
       - 'Minitest for Super Scaffolding':
           name: 'Core: Minitest for Super Scaffolding'
           use-core-repo: true
