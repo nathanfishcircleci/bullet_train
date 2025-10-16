@@ -26,7 +26,7 @@ aliases:
       paths:
         - node_modules
   - &ruby_node_browsers_docker_image
-      - image: cimg/ruby:3.4.3-browsers
+      - image: cimg/ruby:3.4.4-browsers
         environment:
           PGHOST: localhost
           PGUSER: untitled_application
@@ -93,7 +93,7 @@ jobs:
       - <<: *postgres_docker_image
       - image: cimg/redis:6.2.6
     executor: ruby/default
-    parallelism: 2
+    parallelism: 4
     steps:
       - browser-tools/install-chrome:
           chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
@@ -118,21 +118,23 @@ jobs:
       - *wait_for_docker
 
       - run:
-          name: Run tests with Knapsack Pro
+          name: Run unit tests
           command: |
-            export RAILS_ENV=test
-            bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
-          environment:
-            KNAPSACK_PRO_CI_NODE_TOTAL: 2
-
-      # If you don't want to use Knapsack Pro, then use this configuration:
-      #
-      # - run:
-      #     name: Run unit tests
-      #     command: bundle exec rails test
-      # - run:
-      #     name: Run system tests
-      #     command: bundle exec rails test:system
+            if [ -n "$CIRCLE_NODE_INDEX" ]; then
+              # Use CircleCI test splitting for unit tests
+              circleci tests run --split-by=timings --split-by=filesize --parallel --command "bundle exec rails test" test/**/*_test.rb
+            else
+              bundle exec rails test
+            fi
+      - run:
+          name: Run system tests
+          command: |
+            if [ -n "$CIRCLE_NODE_INDEX" ]; then
+              # Use CircleCI test splitting for system tests
+              circleci tests run --split-by=timings --split-by=filesize --parallel --command "bundle exec rails test:system" test/system/**/*_test.rb
+            else
+              bundle exec rails test:system
+            fi
 
       - store_test_results:
           path: test/reports
@@ -144,9 +146,9 @@ jobs:
     docker:
       - <<: *ruby_node_browsers_docker_image
       - <<: *postgres_docker_image
-      - image: circleci/redis
+      - image: cimg/redis:6.2.6
     executor: ruby/default
-    parallelism: 2
+    parallelism: 4
     steps:
       - browser-tools/install-chrome:
           chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
@@ -172,22 +174,23 @@ jobs:
       - *wait_for_docker
 
       - run:
-          name: Run tests with Knapsack Pro
+          name: Run unit tests with HIDE_THINGS
           command: |
-            export RAILS_ENV=test
-            bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
-          environment:
-            KNAPSACK_PRO_CI_NODE_TOTAL: 2
-            HIDE_THINGS: true
-
-      # If you don't want to use Knapsack Pro, then use this configuration:
-      #
-      # - run:
-      #     name: Run unit tests with HIDE_THINGS
-      #     command: HIDE_THINGS=true bundle exec rails test
-      # - run:
-      #     name: Run system tests with HIDE_THINGS
-      #     command: HIDE_THINGS=true bundle exec rails test:system
+            if [ -n "$CIRCLE_NODE_INDEX" ]; then
+              # Use CircleCI test splitting for unit tests
+              circleci tests run --split-by=timings --split-by=filesize --parallel --command "HIDE_THINGS=true bundle exec rails test" test/**/*_test.rb
+            else
+              HIDE_THINGS=true bundle exec rails test
+            fi
+      - run:
+          name: Run system tests with HIDE_THINGS
+          command: |
+            if [ -n "$CIRCLE_NODE_INDEX" ]; then
+              # Use CircleCI test splitting for system tests
+              circleci tests run --split-by=timings --split-by=filesize --parallel --command "HIDE_THINGS=true bundle exec rails test:system" test/system/**/*_test.rb
+            else
+              HIDE_THINGS=true bundle exec rails test:system
+            fi
 
       - store_test_results:
           path: test/reports
@@ -253,7 +256,7 @@ jobs:
       - <<: *postgres_docker_image
       - image: cimg/redis:6.2.6
     executor: ruby/default
-    parallelism: 2
+    parallelism: 4
     steps:
       - browser-tools/install-chrome:
           chrome-version: "116.0.5845.96" # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
@@ -287,15 +290,13 @@ jobs:
               sed -i'.orig' 's/gem "selenium-webdriver"/# gem "selenium-webdriver"/' Gemfile
               sed -i'.orig' 's/gem "webdrivers"/# gem "webdrivers"/' Gemfile
               bundle install
-              bundle exec rails "knapsack_pro:queue:minitest[--verbose]"
+              bundle exec rails test:system
             else
               echo "Skipping system tests with Cuprite"
               exit 0
             fi
           environment:
             RAILS_ENV: test
-            KNAPSACK_PRO_CI_NODE_TOTAL: 2
-            KNAPSACK_PRO_TEST_FILE_PATTERN: "test/system/**{,/*/**}/*_test.rb"
 
   # Uncomment the job at the bottom of this file to run these system tests.
   'System Tests for Action Models':
@@ -307,7 +308,7 @@ jobs:
       - <<: *postgres_docker_image
       - image: cimg/redis:6.2.6
     executor: ruby/default
-    parallelism: 2
+    parallelism: 4
 
     steps:
       - browser-tools/install-chrome:
