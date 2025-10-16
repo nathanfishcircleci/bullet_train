@@ -24,7 +24,7 @@ class Account::Oauth::OmniauthCallbacksControllerTest < ActionDispatch::Integrat
 
     # Test the callback method
     get "/users/auth/stripe_connect/callback"
-    
+
     # Should redirect or handle the callback appropriately
     assert_response :redirect
   end
@@ -32,7 +32,7 @@ class Account::Oauth::OmniauthCallbacksControllerTest < ActionDispatch::Integrat
   test "stripe_connect callback with team_id from env" do
     # Test with team_id in environment
     ENV["TEAM_ID"] = @team.id.to_s
-    
+
     OmniAuth.config.test_mode = true
     OmniAuth.config.mock_auth[:stripe_connect] = OmniAuth::AuthHash.new({
       provider: "stripe_connect",
@@ -44,7 +44,7 @@ class Account::Oauth::OmniauthCallbacksControllerTest < ActionDispatch::Integrat
     })
 
     get "/users/auth/stripe_connect/callback"
-    
+
     assert_response :redirect
   ensure
     ENV.delete("TEAM_ID")
