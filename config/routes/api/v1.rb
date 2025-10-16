@@ -4,6 +4,9 @@ extending = {only: []}
 
 shallow do
   namespace :v1 do
+    # OpenAPI documentation endpoint
+    get 'openapi.yaml', to: 'open_api#index', defaults: { format: :yaml }
+    
     # user specific resources.
     resources :users, extending do
       namespace :oauth do
