@@ -120,7 +120,7 @@ jobs:
           command: |
             if [ -n "$CIRCLE_NODE_INDEX" ]; then
               # Use CircleCI test splitting for unit tests
-              circleci tests run --split-by=timings --split-by=filesize --parallel --command "bundle exec rails test" test/**/*_test.rb
+              circleci tests run --split-by=timings --split-by=filesize --command "bundle exec rails test" test/**/*_test.rb
             else
               bundle exec rails test
             fi
@@ -129,7 +129,7 @@ jobs:
           command: |
             if [ -n "$CIRCLE_NODE_INDEX" ]; then
               # Use CircleCI test splitting for system tests
-              circleci tests run --split-by=timings --split-by=filesize --parallel --command "bundle exec rails test:system" test/system/**/*_test.rb
+              circleci tests run --split-by=timings --split-by=filesize --command "bundle exec rails test:system" test/system/**/*_test.rb
             else
               bundle exec rails test:system
             fi
@@ -174,7 +174,7 @@ jobs:
           command: |
             if [ -n "$CIRCLE_NODE_INDEX" ]; then
               # Use CircleCI test splitting for unit tests
-              circleci tests run --split-by=timings --split-by=filesize --parallel --command "HIDE_THINGS=true bundle exec rails test" test/**/*_test.rb
+              circleci tests run --split-by=timings --split-by=filesize --command "HIDE_THINGS=true bundle exec rails test" test/**/*_test.rb
             else
               HIDE_THINGS=true bundle exec rails test
             fi
@@ -183,7 +183,7 @@ jobs:
           command: |
             if [ -n "$CIRCLE_NODE_INDEX" ]; then
               # Use CircleCI test splitting for system tests
-              circleci tests run --split-by=timings --split-by=filesize --parallel --command "HIDE_THINGS=true bundle exec rails test:system" test/system/**/*_test.rb
+              circleci tests run --split-by=timings --split-by=filesize --command "HIDE_THINGS=true bundle exec rails test:system" test/system/**/*_test.rb
             else
               HIDE_THINGS=true bundle exec rails test:system
             fi
