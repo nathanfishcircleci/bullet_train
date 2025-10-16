@@ -16,7 +16,7 @@ class Api::V1::OpenApiController < ApplicationController
               '200':
                 description: Success
     YAML
-    
+
     render plain: yaml_content, content_type: "text/yaml"
   end
 end
