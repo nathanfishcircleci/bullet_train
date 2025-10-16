@@ -218,7 +218,14 @@ jobs:
       # Install dependencies
       - ruby/bundle-install
       - run: bin/link
-      - run: yarn install
+      - run:
+          name: Install Yarn packages with retry
+          command: |
+            for i in {1..3}; do
+              yarn install && break
+              echo "Yarn install attempt $i failed, retrying..."
+              sleep 5
+            done
       - run: yarn build
       - run: yarn build:css
 
