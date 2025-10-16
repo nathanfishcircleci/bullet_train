@@ -226,17 +226,8 @@ jobs:
 
       - run: bundle add spring
       - run:
-          name: 'Setup Super Scaffolding System Test'
-          command: bundle exec test/bin/setup-super-scaffolding-system-test
-      - run:
-          name: 'Run Super Scaffolding Test'
-          command: bundle exec rails test test/system/super_scaffolding_test.rb
-      - run:
-          name: 'Run Super Scaffolding Partial Test'
-          command: bundle exec rails test test/system/super_scaffolding_partial_test.rb
-      - run:
-          name: 'Run Super Scaffolding Incoming Webhooks Test'
-          command: bundle exec rails test test/controllers/webhooks/incoming/some_provider_webhooks_controller_test.rb
+          name: 'Run Super Scaffolding Tests'
+          command: bundle exec rails test test/system/super_scaffolding/
 
       - store_test_results:
           path: test/reports
