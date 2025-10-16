@@ -34,6 +34,9 @@
     "trix": "^2.1.15",
     "yalc": "^1.0.0-pre.53"
   },
+  "resolutions": {
+    "glob": "^10.3.12"
+  },
   "scripts": {
     "heroku-postbuild": "echo 'This step prevents Heroku from trying to run `yarn build` before ruby and bundler are available. The asset pipeline will call it as part of asset precompilation.'",
     "build": "THEME=\"light\" node esbuild.config.js",
