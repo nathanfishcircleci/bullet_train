@@ -24,4 +24,29 @@ class Api::OpenApiControllerTest < Api::Test
     # We use a robust regex here so that we can match both formats.
     assert output.match?(/Woohoo! Your (Open)?API (definition|description) is valid./)
   end
+
+  test "OpenAPI document returns YAML content" do
+    get "/api/v1/openapi.yaml"
+    
+    assert_response :success
+    assert_equal "text/yaml", response.content_type
+    assert_includes response.body, "openapi: 3.1.0"
+    assert_includes response.body, "Bullet Train API"
+  end
+
+  test "OpenAPI document includes server information" do
+    get "/api/v1/openapi.yaml"
+    
+    assert_response :success
+    assert_includes response.body, "servers:"
+    assert_includes response.body, "/api/v1"
+  end
+
+  test "OpenAPI document includes paths" do
+    get "/api/v1/openapi.yaml"
+    
+    assert_response :success
+    assert_includes response.body, "paths:"
+    assert_includes response.body, "/:"
+  end
 end
