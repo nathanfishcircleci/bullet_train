@@ -37,6 +37,15 @@ Sidekiq::Testing.inline!
 ENV["MINITEST_REPORTERS_REPORTS_DIR"] = "test/reports#{ENV["TEST_ENV_NUMBER"] || ""}"
 require "minitest/reporters"
 
+# Configure Allure reporting
+if ENV["CI"]
+  require "allure-ruby-commons"
+  Allure.configure do |config|
+    config.results_directory = "allure-results"
+    config.clean_results_directory = false
+  end
+end
+
 reporters = []
 
 if ENV["BT_TEST_FORMAT"]&.downcase == "dots"
