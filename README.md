@@ -1,3 +1,5 @@
+# Fork for testing CircleCI capabilities
+
 # Bullet Train Application Template
 If you're new to Bullet Train, start with the [Bullet Train Developer Documentation](https://bullettrain.co/docs) and the [Getting Started](https://bullettrain.co/docs/getting-started) guide. You should also [join the community Discord server](https://discord.gg/bullettrain)!
 
@@ -146,3 +148,4 @@ If you're looking contribute to Bullet Train, you should "Fork" this template re
 ---
 
 This `README.md` file will be replaced with [`README.example.md`](./README.example.md) after running `bin/configure`.
+
