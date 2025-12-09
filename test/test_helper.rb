@@ -60,18 +60,15 @@ if ENV["CI"]
     # Cucumber adapter not available, skip
   end
 
+  # Start a single global test container for all tests
+  container = Allure::TestResultContainer.new(uuid: SecureRandom.uuid)
+  Allure.lifecycle.start_test_container(container)
+
   # Minitest integration for Allure
   module AllureMinitestPlugin
     def before_setup
       super
       return unless ENV["CI"]
-
-      # Start test container if not already started for this test class
-      unless self.class.instance_variable_get(:@allure_container_started)
-        container = Allure::TestResultContainer.new(uuid: SecureRandom.uuid)
-        Allure.lifecycle.start_test_container(container)
-        self.class.instance_variable_set(:@allure_container_started, true)
-      end
 
       test_name = "#{self.class.name}##{name}"
       result = Allure::TestResult.new(
