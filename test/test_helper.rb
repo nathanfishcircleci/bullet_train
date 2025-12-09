@@ -86,7 +86,6 @@ if ENV["CI"]
 
       Allure.lifecycle.update_test_case { |test_case| test_case.status = status }
       Allure.lifecycle.stop_test_case
-      Allure.lifecycle.write_test_case
 
       super
     end
