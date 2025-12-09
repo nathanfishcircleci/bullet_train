@@ -40,6 +40,7 @@ require "minitest/reporters"
 # Configure Allure reporting
 if ENV["CI"]
   require "allure-ruby-commons"
+  require "securerandom"
   # Use TEST_ENV_NUMBER for parallel execution support
   allure_results_dir = "allure-results#{ENV["TEST_ENV_NUMBER"] || ""}"
   Allure.configure do |config|
@@ -65,6 +66,13 @@ if ENV["CI"]
       super
       return unless ENV["CI"]
 
+      # Start test container if not already started for this test class
+      unless self.class.instance_variable_get(:@allure_container_started)
+        container = Allure::TestResultContainer.new(uuid: SecureRandom.uuid)
+        Allure.lifecycle.start_test_container(container)
+        self.class.instance_variable_set(:@allure_container_started, true)
+      end
+
       test_name = "#{self.class.name}##{name}"
       result = Allure::TestResult.new(
         name: test_name,
@@ -76,16 +84,22 @@ if ENV["CI"]
     def after_teardown
       return unless ENV["CI"]
 
-      status = if passed?
-        Allure::Status::PASSED
-      elsif skipped?
-        Allure::Status::SKIPPED
-      else
-        Allure::Status::FAILED
-      end
+      # Only update/stop if test case was started successfully
+      begin
+        status = if passed?
+          Allure::Status::PASSED
+        elsif skipped?
+          Allure::Status::SKIPPED
+        else
+          Allure::Status::FAILED
+        end
 
-      Allure.lifecycle.update_test_case { |test_case| test_case.status = status }
-      Allure.lifecycle.stop_test_case
+        Allure.lifecycle.update_test_case { |test_case| test_case.status = status }
+        Allure.lifecycle.stop_test_case
+      rescue StandardError => e
+        # Silently handle errors if test case wasn't started
+        # This can happen if before_setup failed or container wasn't started
+      end
 
       super
     end
