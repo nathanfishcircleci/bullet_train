@@ -105,6 +105,17 @@ if ENV["CI"]
     end
   end
 
+  # Stop all test containers when process exits
+  at_exit do
+    if ENV["CI"]
+      begin
+        Allure.lifecycle.stop_test_container
+      rescue
+        # Ignore errors when stopping container
+      end
+    end
+  end
+
   ActiveSupport::TestCase.include(AllureMinitestPlugin)
 end
 
