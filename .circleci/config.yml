@@ -52,25 +52,21 @@ aliases:
           echo 'export PATH="/tmp/allure-2.24.0/bin:$PATH"' >> $BASH_ENV
   - &generate_allure_report
       run:
-        name: Generate Allure Report
+        name: Generate Allure Report from JUnit XML
         command: |
           export PATH="/tmp/allure-2.24.0/bin:$PATH"
-          # Collect results from all parallel workers
-          mkdir -p allure-results-combined
-          echo "Looking for Allure results directories..."
-          find . -type d -name "allure-results*" -not -name "allure-results-combined" | head -20
-          find . -type d -name "allure-results*" -not -name "allure-results-combined" -exec sh -c 'echo "Copying from $1"; cp -r "$1"/* allure-results-combined/ 2>/dev/null || true' _ {} \;
-          echo "Combined results directory contents:"
-          ls -la allure-results-combined/ | head -20 || echo "Directory is empty or doesn't exist"
-          if [ -d "allure-results-combined" ] && [ "$(ls -A allure-results-combined 2>/dev/null)" ]; then
-            echo "Generating Allure report..."
-            /tmp/allure-2.24.0/bin/allure generate allure-results-combined --clean -o allure-report
+          # Collect JUnit XML from all parallel workers
+          mkdir -p test/reports-combined
+          find . -type d -name "test/reports*" -not -name "test/reports-combined" -exec sh -c 'find "$1" -name "*.xml" -exec cp {} test/reports-combined/ \;' _ {} \;
+          echo "Found $(find test/reports-combined -name "*.xml" 2>/dev/null | wc -l) JUnit XML file(s)"
+          if [ -d "test/reports-combined" ] && [ "$(find test/reports-combined -name "*.xml" 2>/dev/null | wc -l)" -gt 0 ]; then
+            echo "Generating Allure report from JUnit XML..."
+            # Allure CLI with junit-xml plugin can convert JUnit XML to Allure format
+            /tmp/allure-2.24.0/bin/allure generate test/reports-combined --clean -o allure-report
             echo "Report generated. Contents of allure-report:"
             ls -la allure-report/ | head -20 || echo "Report directory is empty"
           else
-            echo "No Allure results found, skipping report generation"
-            echo "Checking for individual result directories:"
-            find . -type d -name "allure-results*" -exec sh -c 'echo "Found: $1 ($(ls -1 "$1" 2>/dev/null | wc -l) files)"' _ {} \;
+            echo "No JUnit XML files found, skipping report generation"
           fi
   - &store_allure_artifacts
       store_artifacts:
