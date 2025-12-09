@@ -46,17 +46,25 @@ if ENV["CI"]
     config.results_directory = allure_results_dir
     config.clean_results_directory = false
   end
-  
+
   # Add Minitest plugin for Allure
-  require "allure-ruby-commons/rspec" rescue nil
-  require "allure-ruby-commons/cucumber" rescue nil
-  
+  begin
+    require "allure-ruby-commons/rspec"
+  rescue LoadError
+    # RSpec adapter not available, skip
+  end
+  begin
+    require "allure-ruby-commons/cucumber"
+  rescue LoadError
+    # Cucumber adapter not available, skip
+  end
+
   # Minitest integration for Allure
   module AllureMinitestPlugin
     def before_setup
       super
       return unless ENV["CI"]
-      
+
       test_name = "#{self.class.name}##{name}"
       result = Allure::ResultUtils::TestResult.new(
         name: test_name,
@@ -64,10 +72,10 @@ if ENV["CI"]
       )
       Allure.lifecycle.start_test_case(result)
     end
-    
+
     def after_teardown
       return unless ENV["CI"]
-      
+
       status = if passed?
         Allure::ResultUtils::Status::PASSED
       elsif skipped?
@@ -75,15 +83,15 @@ if ENV["CI"]
       else
         Allure::ResultUtils::Status::FAILED
       end
-      
+
       Allure.lifecycle.update_test_case { |test_case| test_case.status = status }
       Allure.lifecycle.stop_test_case
       Allure.lifecycle.write_test_case
-      
+
       super
     end
   end
-  
+
   ActiveSupport::TestCase.include(AllureMinitestPlugin)
 end
 
