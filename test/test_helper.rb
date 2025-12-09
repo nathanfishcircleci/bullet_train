@@ -102,11 +102,9 @@ unless ENV["ALLURE_DISABLED"] == "true"
 
   # Stop all test containers when process exits
   at_exit do
-    begin
-      Allure.lifecycle.stop_test_container
-    rescue
-      # Ignore errors when stopping container
-    end
+    Allure.lifecycle.stop_test_container
+  rescue
+    # Ignore errors when stopping container
   end
 
   ActiveSupport::TestCase.include(AllureMinitestPlugin)
