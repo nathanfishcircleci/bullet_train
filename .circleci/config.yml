@@ -44,16 +44,19 @@ aliases:
       run:
         name: Install Allure CLI
         command: |
-          curl -o allure-2.24.0.tgz -Ls https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.24.0/allure-commandline-2.24.0.tgz
-          tar -zxf allure-2.24.0.tgz -C /opt/
-          rm allure-2.24.0.tgz
-          ln -s /opt/allure-2.24.0/bin/allure /usr/local/bin/allure
+          curl -o /tmp/allure-2.24.0.tgz -Ls https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.24.0/allure-commandline-2.24.0.tgz
+          tar -zxf /tmp/allure-2.24.0.tgz -C /tmp/
+          rm /tmp/allure-2.24.0.tgz
+          chmod +x /tmp/allure-2.24.0/bin/allure
+          export PATH="/tmp/allure-2.24.0/bin:$PATH"
+          echo 'export PATH="/tmp/allure-2.24.0/bin:$PATH"' >> $BASH_ENV
   - &generate_allure_report
       run:
         name: Generate Allure Report
         command: |
+          export PATH="/tmp/allure-2.24.0/bin:$PATH"
           if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
-            allure generate allure-results --clean -o allure-report
+            /tmp/allure-2.24.0/bin/allure generate allure-results --clean -o allure-report
           else
             echo "No Allure results found, skipping report generation"
           fi
