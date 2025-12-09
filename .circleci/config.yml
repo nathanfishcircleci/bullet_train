@@ -150,22 +150,10 @@ jobs:
 
       - run:
           name: Run unit tests
-          command: |
-            if [ -n "$CIRCLE_NODE_INDEX" ]; then
-              # Use CircleCI test splitting for unit tests
-              circleci tests run --split-by=timings --split-by=filesize --command "bundle exec rails test" test/**/*_test.rb
-            else
-              bundle exec rails test
-            fi
+          command: circleci tests run --split-by=timings --split-by=filesize --command "bundle exec rails test" test/**/*_test.rb
       - run:
           name: Run system tests
-          command: |
-            if [ -n "$CIRCLE_NODE_INDEX" ]; then
-              # Use CircleCI test splitting for system tests
-              circleci tests run --split-by=timings --split-by=filesize --command "bundle exec rails test:system" test/system/**/*_test.rb
-            else
-              bundle exec rails test:system
-            fi
+          command: circleci tests run --split-by=timings --split-by=filesize --command "bundle exec rails test:system" test/system/**/*_test.rb
 
       - store_test_results:
           path: test/reports
@@ -218,22 +206,10 @@ jobs:
 
       - run:
           name: Run unit tests with HIDE_THINGS
-          command: |
-            if [ -n "$CIRCLE_NODE_INDEX" ]; then
-              # Use CircleCI test splitting for unit tests
-              circleci tests run --split-by=timings --split-by=filesize --command "HIDE_THINGS=true bundle exec rails test" test/**/*_test.rb
-            else
-              HIDE_THINGS=true bundle exec rails test
-            fi
+          command: circleci tests run --split-by=timings --split-by=filesize --command "HIDE_THINGS=true bundle exec rails test" test/**/*_test.rb
       - run:
           name: Run system tests with HIDE_THINGS
-          command: |
-            if [ -n "$CIRCLE_NODE_INDEX" ]; then
-              # Use CircleCI test splitting for system tests
-              circleci tests run --split-by=timings --split-by=filesize --command "HIDE_THINGS=true bundle exec rails test:system" test/system/**/*_test.rb
-            else
-              HIDE_THINGS=true bundle exec rails test:system
-            fi
+          command: circleci tests run --split-by=timings --split-by=filesize --command "HIDE_THINGS=true bundle exec rails test:system" test/system/**/*_test.rb
 
       - store_test_results:
           path: test/reports
