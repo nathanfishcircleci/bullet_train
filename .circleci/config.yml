@@ -230,7 +230,7 @@ jobs:
           name: 'Run Super Scaffolding Tests'
           command: |
             # Run super scaffolding tests except the failing OpenAPI test
-            find test/system/super_scaffolding/ -name "*_test.rb" -not -name "open_api_test.rb" -exec bundle exec rails test {} \;
+            find test/system/super_scaffolding/ -exec bundle exec rails test {} \;
 
       - store_test_results:
           path: test/reports
