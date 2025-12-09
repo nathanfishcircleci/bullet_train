@@ -55,8 +55,11 @@ aliases:
         name: Generate Allure Report
         command: |
           export PATH="/tmp/allure-2.24.0/bin:$PATH"
-          if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
-            /tmp/allure-2.24.0/bin/allure generate allure-results --clean -o allure-report
+          # Collect results from all parallel workers
+          mkdir -p allure-results-combined
+          find . -type d -name "allure-results*" -not -name "allure-results-combined" -exec cp -r {}/* allure-results-combined/ \; 2>/dev/null || true
+          if [ -d "allure-results-combined" ] && [ "$(ls -A allure-results-combined)" ]; then
+            /tmp/allure-2.24.0/bin/allure generate allure-results-combined --clean -o allure-report
           else
             echo "No Allure results found, skipping report generation"
           fi
@@ -151,9 +154,13 @@ jobs:
       - run:
           name: Run unit tests
           command: bundle exec rails test
+          environment:
+            CI: "true"
       - run:
           name: Run system tests
           command: bundle exec rails test:system
+          environment:
+            CI: "true"
 
       - store_test_results:
           path: test/reports
@@ -207,9 +214,13 @@ jobs:
       - run:
           name: Run unit tests with HIDE_THINGS
           command: HIDE_THINGS=true bundle exec rails test
+          environment:
+            CI: "true"
       - run:
           name: Run system tests with HIDE_THINGS
           command: HIDE_THINGS=true bundle exec rails test:system
+          environment:
+            CI: "true"
 
       - store_test_results:
           path: test/reports
@@ -274,6 +285,8 @@ jobs:
           command: |
             # Run super scaffolding tests except the failing OpenAPI test
             find test/system/super_scaffolding/ -name "*_test.rb" -not -name "open_api_test.rb" -exec bundle exec rails test {} \;
+          environment:
+            CI: "true"
 
       - store_test_results:
           path: test/reports

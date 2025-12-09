@@ -40,10 +40,51 @@ require "minitest/reporters"
 # Configure Allure reporting
 if ENV["CI"]
   require "allure-ruby-commons"
+  # Use TEST_ENV_NUMBER for parallel execution support
+  allure_results_dir = "allure-results#{ENV["TEST_ENV_NUMBER"] || ""}"
   Allure.configure do |config|
-    config.results_directory = "allure-results"
+    config.results_directory = allure_results_dir
     config.clean_results_directory = false
   end
+  
+  # Add Minitest plugin for Allure
+  require "allure-ruby-commons/rspec" rescue nil
+  require "allure-ruby-commons/cucumber" rescue nil
+  
+  # Minitest integration for Allure
+  module AllureMinitestPlugin
+    def before_setup
+      super
+      return unless ENV["CI"]
+      
+      test_name = "#{self.class.name}##{name}"
+      result = Allure::ResultUtils::TestResult.new(
+        name: test_name,
+        full_name: test_name
+      )
+      Allure.lifecycle.start_test_case(result)
+    end
+    
+    def after_teardown
+      return unless ENV["CI"]
+      
+      status = if passed?
+        Allure::ResultUtils::Status::PASSED
+      elsif skipped?
+        Allure::ResultUtils::Status::SKIPPED
+      else
+        Allure::ResultUtils::Status::FAILED
+      end
+      
+      Allure.lifecycle.update_test_case { |test_case| test_case.status = status }
+      Allure.lifecycle.stop_test_case
+      Allure.lifecycle.write_test_case
+      
+      super
+    end
+  end
+  
+  ActiveSupport::TestCase.include(AllureMinitestPlugin)
 end
 
 reporters = []
