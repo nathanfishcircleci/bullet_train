@@ -150,10 +150,10 @@ jobs:
 
       - run:
           name: Run unit tests
-          command: circleci tests run --split-by=timings --split-by=filesize --command "bundle exec rails test" test/**/*_test.rb
+          command: bundle exec rails test
       - run:
           name: Run system tests
-          command: circleci tests run --split-by=timings --split-by=filesize --command "bundle exec rails test:system" test/system/**/*_test.rb
+          command: bundle exec rails test:system
 
       - store_test_results:
           path: test/reports
@@ -206,10 +206,10 @@ jobs:
 
       - run:
           name: Run unit tests with HIDE_THINGS
-          command: circleci tests run --split-by=timings --split-by=filesize --command "HIDE_THINGS=true bundle exec rails test" test/**/*_test.rb
+          command: HIDE_THINGS=true bundle exec rails test
       - run:
           name: Run system tests with HIDE_THINGS
-          command: circleci tests run --split-by=timings --split-by=filesize --command "HIDE_THINGS=true bundle exec rails test:system" test/system/**/*_test.rb
+          command: HIDE_THINGS=true bundle exec rails test:system
 
       - store_test_results:
           path: test/reports
