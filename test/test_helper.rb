@@ -37,8 +37,9 @@ Sidekiq::Testing.inline!
 ENV["MINITEST_REPORTERS_REPORTS_DIR"] = "test/reports#{ENV["TEST_ENV_NUMBER"] || ""}"
 require "minitest/reporters"
 
-# Configure Allure reporting
-if ENV["CI"]
+# Configure Allure reporting (works in both CI and locally)
+# Set ALLURE_DISABLED=true to disable Allure reporting
+unless ENV["ALLURE_DISABLED"] == "true"
   require "allure-ruby-commons"
   require "securerandom"
   # Use TEST_ENV_NUMBER for parallel execution support
@@ -68,7 +69,6 @@ if ENV["CI"]
   module AllureMinitestPlugin
     def before_setup
       super
-      return unless ENV["CI"]
 
       test_name = "#{self.class.name}##{name}"
       result = Allure::TestResult.new(
@@ -79,8 +79,6 @@ if ENV["CI"]
     end
 
     def after_teardown
-      return unless ENV["CI"]
-
       # Only update/stop if test case was started successfully
       begin
         status = if passed?
@@ -104,12 +102,10 @@ if ENV["CI"]
 
   # Stop all test containers when process exits
   at_exit do
-    if ENV["CI"]
-      begin
-        Allure.lifecycle.stop_test_container
-      rescue
-        # Ignore errors when stopping container
-      end
+    begin
+      Allure.lifecycle.stop_test_container
+    rescue
+      # Ignore errors when stopping container
     end
   end
 
