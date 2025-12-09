@@ -7,7 +7,8 @@ class Public::HomeControllerTest < ActionDispatch::IntegrationTest
     get "/"
 
     assert_response :redirect
-    assert_redirected_to "https://example.com"
+    # Check location header for external redirects (Rails blocks unsafe redirects)
+    assert_equal "https://example.com", response.location
   ensure
     ENV.delete("MARKETING_SITE_URL")
   end
