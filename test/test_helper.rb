@@ -96,7 +96,7 @@ if ENV["CI"]
 
         Allure.lifecycle.update_test_case { |test_case| test_case.status = status }
         Allure.lifecycle.stop_test_case
-      rescue StandardError => e
+      rescue
         # Silently handle errors if test case wasn't started
         # This can happen if before_setup failed or container wasn't started
       end
