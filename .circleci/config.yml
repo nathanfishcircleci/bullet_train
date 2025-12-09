@@ -141,10 +141,12 @@ jobs:
       # Install Allure CLI
       - *install_allure
 
-      # Create allure-results directory
+      # Create test results directories
       - run:
-          name: Create Allure Results Directory
-          command: mkdir -p allure-results
+          name: Create Test Results Directories
+          command: |
+            mkdir -p test/reports
+            mkdir -p allure-results
 
       - run:
           name: Run unit tests
@@ -207,10 +209,12 @@ jobs:
       # Install Allure CLI
       - *install_allure
 
-      # Create allure-results directory
+      # Create test results directories
       - run:
-          name: Create Allure Results Directory
-          command: mkdir -p allure-results
+          name: Create Test Results Directories
+          command: |
+            mkdir -p test/reports
+            mkdir -p allure-results
 
       - run:
           name: Run unit tests with HIDE_THINGS
@@ -281,10 +285,12 @@ jobs:
       # Install Allure CLI
       - *install_allure
 
-      # Create allure-results directory
+      # Create test results directories
       - run:
-          name: Create Allure Results Directory
-          command: mkdir -p allure-results
+          name: Create Test Results Directories
+          command: |
+            mkdir -p test/reports
+            mkdir -p allure-results
 
       - run: bundle add spring
       - run:
@@ -334,10 +340,12 @@ jobs:
       # Install Allure CLI
       - *install_allure
 
-      # Create allure-results directory
+      # Create test results directories
       - run:
-          name: Create Allure Results Directory
-          command: mkdir -p allure-results
+          name: Create Test Results Directories
+          command: |
+            mkdir -p test/reports
+            mkdir -p allure-results
 
       - run:
           name: Run system tests with cuprite as system test driver
@@ -356,6 +364,9 @@ jobs:
             fi
           environment:
             RAILS_ENV: test
+
+      - store_test_results:
+          path: test/reports
 
       # Generate and store Allure report
       - *generate_allure_report
@@ -397,10 +408,12 @@ jobs:
       # Install Allure CLI
       - *install_allure
 
-      # Create allure-results directory
+      # Create test results directories
       - run:
-          name: Create Allure Results Directory
-          command: mkdir -p allure-results
+          name: Create Test Results Directories
+          command: |
+            mkdir -p test/reports
+            mkdir -p allure-results
 
       - run: bundle add spring
       - run:
@@ -409,6 +422,9 @@ jobs:
       - run:
           name: 'Run Action Models Test'
           command: bundle exec rails test test/system/action_models_test.rb
+
+      - store_test_results:
+          path: test/reports
 
       # Generate and store Allure report
       - *generate_allure_report
