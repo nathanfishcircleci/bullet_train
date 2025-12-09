@@ -66,7 +66,7 @@ if ENV["CI"]
       return unless ENV["CI"]
 
       test_name = "#{self.class.name}##{name}"
-      result = Allure::ResultUtils::TestResult.new(
+      result = Allure::TestResult.new(
         name: test_name,
         full_name: test_name
       )
@@ -77,11 +77,11 @@ if ENV["CI"]
       return unless ENV["CI"]
 
       status = if passed?
-        Allure::ResultUtils::Status::PASSED
+        Allure::Status::PASSED
       elsif skipped?
-        Allure::ResultUtils::Status::SKIPPED
+        Allure::Status::SKIPPED
       else
-        Allure::ResultUtils::Status::FAILED
+        Allure::Status::FAILED
       end
 
       Allure.lifecycle.update_test_case { |test_case| test_case.status = status }
