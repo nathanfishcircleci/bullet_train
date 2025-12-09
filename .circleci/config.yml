@@ -40,37 +40,6 @@ aliases:
   - &wait_for_docker
       # We run this because the DB might not be available for a while due to a race condition.
       run: dockerize -wait tcp://localhost:5432 -timeout 1m
-  - &install_allure
-      run:
-        name: Install Allure CLI
-        command: |
-          curl -o /tmp/allure-2.24.0.tgz -Ls https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.24.0/allure-commandline-2.24.0.tgz
-          tar -zxf /tmp/allure-2.24.0.tgz -C /tmp/
-          rm /tmp/allure-2.24.0.tgz
-          chmod +x /tmp/allure-2.24.0/bin/allure
-          export PATH="/tmp/allure-2.24.0/bin:$PATH"
-          echo 'export PATH="/tmp/allure-2.24.0/bin:$PATH"' >> $BASH_ENV
-  - &generate_allure_report
-      run:
-        name: Generate Allure Report from JUnit XML
-        command: |
-          export PATH="/tmp/allure-2.24.0/bin:$PATH"
-          # Collect JUnit XML from all parallel workers
-          mkdir -p test/reports-combined
-          find . -type d -name "test/reports*" -not -name "test/reports-combined" -exec sh -c 'find "$1" -name "*.xml" -exec cp {} test/reports-combined/ \;' _ {} \;
-          echo "Found $(find test/reports-combined -name "*.xml" 2>/dev/null | wc -l) JUnit XML file(s)"
-          if [ -d "test/reports-combined" ] && [ "$(find test/reports-combined -name "*.xml" 2>/dev/null | wc -l)" -gt 0 ]; then
-            echo "Generating Allure report from JUnit XML..."
-            # Allure CLI with junit-xml plugin can convert JUnit XML to Allure format
-            /tmp/allure-2.24.0/bin/allure generate test/reports-combined --clean -o allure-report
-            echo "Report generated. Contents of allure-report:"
-            ls -la allure-report/ | head -20 || echo "Report directory is empty"
-          else
-            echo "No JUnit XML files found, skipping report generation"
-          fi
-  - &store_allure_artifacts
-      store_artifacts:
-        path: allure-report
 
 jobs:
   'Standard Ruby':
@@ -146,15 +115,11 @@ jobs:
 
       - *wait_for_docker
 
-      # Install Allure CLI
-      - *install_allure
-
       # Create test results directories
       - run:
           name: Create Test Results Directories
           command: |
             mkdir -p test/reports
-            mkdir -p allure-results
 
       - run:
           name: Run unit tests
@@ -169,10 +134,6 @@ jobs:
 
       - store_test_results:
           path: test/reports
-
-      # Generate and store Allure report
-      - *generate_allure_report
-      - *store_allure_artifacts
 
   'Minitest with HIDE_THINGS':
     parameters:
@@ -206,15 +167,11 @@ jobs:
 
       - *wait_for_docker
 
-      # Install Allure CLI
-      - *install_allure
-
       # Create test results directories
       - run:
           name: Create Test Results Directories
           command: |
             mkdir -p test/reports
-            mkdir -p allure-results
 
       - run:
           name: Run unit tests with HIDE_THINGS
@@ -229,10 +186,6 @@ jobs:
 
       - store_test_results:
           path: test/reports
-
-      # Generate and store Allure report
-      - *generate_allure_report
-      - *store_allure_artifacts
 
   'Minitest for Super Scaffolding':
     parameters:
@@ -274,15 +227,11 @@ jobs:
 
       - *wait_for_docker
 
-      # Install Allure CLI
-      - *install_allure
-
       # Create test results directories
       - run:
           name: Create Test Results Directories
           command: |
             mkdir -p test/reports
-            mkdir -p allure-results
 
       - run: bundle add spring
       - run:
@@ -295,10 +244,6 @@ jobs:
 
       - store_test_results:
           path: test/reports
-
-      # Generate and store Allure report
-      - *generate_allure_report
-      - *store_allure_artifacts
 
   'System Tests with Cuprite':
     parameters:
@@ -331,15 +276,11 @@ jobs:
 
       - *wait_for_docker
 
-      # Install Allure CLI
-      - *install_allure
-
       # Create test results directories
       - run:
           name: Create Test Results Directories
           command: |
             mkdir -p test/reports
-            mkdir -p allure-results
 
       - run:
           name: Run system tests with cuprite as system test driver
@@ -361,10 +302,6 @@ jobs:
 
       - store_test_results:
           path: test/reports
-
-      # Generate and store Allure report
-      - *generate_allure_report
-      - *store_allure_artifacts
 
   # Uncomment the job at the bottom of this file to run these system tests.
   'System Tests for Action Models':
@@ -399,15 +336,11 @@ jobs:
 
       - *wait_for_docker
 
-      # Install Allure CLI
-      - *install_allure
-
       # Create test results directories
       - run:
           name: Create Test Results Directories
           command: |
             mkdir -p test/reports
-            mkdir -p allure-results
 
       - run: bundle add spring
       - run:
@@ -419,10 +352,6 @@ jobs:
 
       - store_test_results:
           path: test/reports
-
-      # Generate and store Allure report
-      - *generate_allure_report
-      - *store_allure_artifacts
 
 workflows:
   version: 2.1

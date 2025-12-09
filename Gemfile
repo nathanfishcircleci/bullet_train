@@ -190,8 +190,6 @@ group :test do
   # Better test output
   gem "minitest-reporters"
 
-  # Allure reporting for test results
-  gem "allure-ruby-commons"
 
   # Interact with emails during testing.
   gem "capybara-email"
