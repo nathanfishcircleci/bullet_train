@@ -88,12 +88,24 @@ module AbilityTest
   class DeveloperScenarios < ActiveSupport::TestCase
     setup do
       @developer = FactoryBot.create :onboarded_user
-      @developer.update!(role_ids: [Role.developer.id])
+      @developer_email = @developer.email
+      # Set DEVELOPER_EMAILS to include this user's email
+      ENV["DEVELOPER_EMAILS"] = @developer_email
       @developer_ability = Ability.new(@developer)
     end
 
-    test "developer has admin abilities" do
-      # Test developer-specific abilities
+    teardown do
+      ENV.delete("DEVELOPER_EMAILS")
+    end
+
+    test "developer has developer status" do
+      # Test that developer? returns true when email is in DEVELOPER_EMAILS
+      assert @developer.developer?
+    end
+
+    test "developer abilities are configured" do
+      # Test that developer abilities are set up (currently empty in Ability model)
+      # The Ability model has a placeholder for developer abilities
       assert @developer_ability.can?(:manage, @developer)
     end
   end
