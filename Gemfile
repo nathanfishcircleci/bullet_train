@@ -190,7 +190,6 @@ group :test do
   # Better test output
   gem "minitest-reporters"
 
-
   # Interact with emails during testing.
   gem "capybara-email"
 

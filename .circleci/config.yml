@@ -124,13 +124,9 @@ jobs:
       - run:
           name: Run unit tests
           command: bundle exec rails test
-          environment:
-            CI: "true"
       - run:
           name: Run system tests
           command: bundle exec rails test:system
-          environment:
-            CI: "true"
 
       - store_test_results:
           path: test/reports
@@ -176,13 +172,9 @@ jobs:
       - run:
           name: Run unit tests with HIDE_THINGS
           command: HIDE_THINGS=true bundle exec rails test
-          environment:
-            CI: "true"
       - run:
           name: Run system tests with HIDE_THINGS
           command: HIDE_THINGS=true bundle exec rails test:system
-          environment:
-            CI: "true"
 
       - store_test_results:
           path: test/reports
@@ -239,8 +231,6 @@ jobs:
           command: |
             # Run super scaffolding tests except the failing OpenAPI test
             find test/system/super_scaffolding/ -name "*_test.rb" -not -name "open_api_test.rb" -exec bundle exec rails test {} \;
-          environment:
-            CI: "true"
 
       - store_test_results:
           path: test/reports
