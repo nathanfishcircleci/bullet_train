@@ -70,6 +70,11 @@ aliases:
             echo "No JUnit XML files found in test/reports (found: $XML_COUNT), skipping report generation"
           fi
         when: always
+  - &get_previous_artifacts
+      run:
+        name: Get previous artifacts
+        command: |
+          .circleci/get-previous-artifacts.sh/
   - &store_allure_artifacts
       store_artifacts:
         path: allure-report
@@ -173,6 +178,9 @@ jobs:
 
       - store_test_results:
           path: test/reports
+
+      # Get previous artifacts
+      - *get_previous_artifacts
 
       # Generate and store Allure report
       - *generate_allure_report
