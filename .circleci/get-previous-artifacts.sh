@@ -12,7 +12,7 @@ OUTPUT_DIR="${2:-previous-artifacts}"
 
 # CircleCI API configuration
 CIRCLE_API_URL="https://circleci.com/api/v2"
-PROJECT_SLUG="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+PROJECT_SLUG="github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
 BRANCH="${CIRCLE_BRANCH:-main}"
 
 # Check if API token is set
@@ -33,6 +33,7 @@ echo ""
 echo "Fetching pipelines for branch: $BRANCH"
 PIPELINES_RESPONSE=$(curl -s -u "${CIRCLECI_TOKEN}:" \
   "${CIRCLE_API_URL}/project/${PROJECT_SLUG}/pipeline?branch=${BRANCH}")
+echo "$PIPELINES_RESPONSE"
 
 # Get the current pipeline number from API (most recent pipeline is the first in the list)
 CURRENT_PIPELINE_NUMBER=$(echo "$PIPELINES_RESPONSE" | jq -r ".items[0].number")
