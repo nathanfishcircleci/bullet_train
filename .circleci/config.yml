@@ -58,7 +58,13 @@ aliases:
       run:
         name: Copy Allure Report History from Previous Pipeline
         command: |
-          cp -r previous-artifacts/allure-report/history/. allure-report/history/
+          if [ -d "previous-artifacts/allure-report/history" ]; then
+            mkdir -p allure-report/history
+            cp -r previous-artifacts/allure-report/history/. allure-report/history/
+            echo "Copied Allure report history from previous pipeline"
+          else
+            echo "No previous Allure report history found, skipping copy"
+          fi
         when: always
   - &generate_allure_report
       run:
