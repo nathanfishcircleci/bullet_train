@@ -54,6 +54,12 @@ aliases:
           chmod +x allure-2.24.0/bin/allure
           export PATH="/tmp/allure-2.24.0/bin:$PATH"
           echo 'export PATH="/tmp/allure-2.24.0/bin:$PATH"' >> $BASH_ENV
+  - &copy_allure_report_history_from_previous_pipeline
+      run:
+        name: Copy Allure Report History from Previous Pipeline
+        command: |
+          cp -r previous-artifacts/allure-report/history/. allure-report/history/
+        when: always
   - &generate_allure_report
       run:
         name: Generate Allure Report from test/reports
@@ -182,6 +188,9 @@ jobs:
 
       # Get previous artifacts
       - *get_previous_artifacts
+
+      # Copy Allure Report History from Previous Pipeline
+      - *copy_allure_report_history_from_previous_pipeline  
 
       # Generate and store Allure report
       - *generate_allure_report
