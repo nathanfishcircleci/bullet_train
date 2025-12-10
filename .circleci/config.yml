@@ -60,7 +60,7 @@ aliases:
         command: |
           if [ -d "previous-artifacts/allure-report/history" ]; then
             mkdir -p allure-report/history
-            cp -r previous-artifacts/allure-report/history/. allure-report/history/
+            cp -r previous-artifacts/allure-report/history/. test/reports/history/
             echo "Copied Allure report history from previous pipeline"
           else
             echo "No previous Allure report history found, skipping copy"
