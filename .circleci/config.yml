@@ -69,6 +69,7 @@ aliases:
           else
             echo "No JUnit XML files found in test/reports (found: $XML_COUNT), skipping report generation"
           fi
+        when: always
   - &store_allure_artifacts
       store_artifacts:
         path: allure-report
