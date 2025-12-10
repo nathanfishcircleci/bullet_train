@@ -74,7 +74,7 @@ aliases:
       run:
         name: Get previous artifacts
         command: |
-          .circleci/get-previous-artifacts.sh/
+          .circleci/get-previous-artifacts.sh
         when: always
   - &store_allure_artifacts
       store_artifacts:
