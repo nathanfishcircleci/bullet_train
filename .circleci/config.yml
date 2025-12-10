@@ -58,28 +58,46 @@ aliases:
       run:
         name: Generate Allure Report from test/reports
         command: |
+          set -x
           export PATH="/tmp/allure-2.24.0/bin:$PATH"
+          echo "=========================================="
+          echo "Allure Report Generation Step"
+          echo "=========================================="
           echo "Current working directory: $(pwd)"
+          echo "Checking for Allure CLI:"
+          /tmp/allure-2.24.0/bin/allure --version || echo "Allure CLI not found"
+          echo ""
+          echo "Checking test/reports directory:"
+          if [ -d "test/reports" ]; then
+            echo "test/reports directory exists"
+            ls -la test/reports/ | head -10
+          else
+            echo "ERROR: test/reports directory does not exist"
+            exit 1
+          fi
+          echo ""
           XML_COUNT=$(find test/reports -name "*.xml" 2>/dev/null | wc -l | tr -d ' ')
           echo "Found $XML_COUNT JUnit XML file(s) in test/reports"
-          if [ -d "test/reports" ] && [ "$XML_COUNT" -gt 0 ]; then
+          if [ "$XML_COUNT" -gt 0 ]; then
             echo "Sample XML files found:"
             find test/reports -name "*.xml" 2>/dev/null | head -5
+            echo ""
             echo "Generating Allure report from JUnit XML..."
-            # Allure 2.x can generate reports from JUnit XML using the results directory
-            # The junit-xml plugin should handle the conversion automatically
             mkdir -p allure-report
-            # Use test/reports directly - Allure should detect JUnit XML format
             /tmp/allure-2.24.0/bin/allure generate test/reports --clean -o allure-report 2>&1
-            echo "Report generation exit code: $?"
+            EXIT_CODE=$?
+            echo ""
+            echo "Report generation exit code: $EXIT_CODE"
             echo "Checking allure-report directory:"
             if [ -d "allure-report" ]; then
               echo "allure-report directory exists"
               ls -la allure-report/ | head -20
               if [ -f "allure-report/index.html" ]; then
+                echo ""
                 echo "SUCCESS: Allure report index.html exists"
                 du -sh allure-report
               else
+                echo ""
                 echo "WARNING: Allure report index.html not found"
                 echo "Contents of allure-report:"
                 find allure-report -type f | head -10
@@ -90,6 +108,7 @@ aliases:
           else
             echo "No JUnit XML files found in test/reports (found: $XML_COUNT), skipping report generation"
           fi
+          echo "=========================================="
   - &store_allure_artifacts
       store_artifacts:
         path: allure-report
