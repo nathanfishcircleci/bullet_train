@@ -132,7 +132,7 @@ jobs:
       - image: cimg/redis:6.2.6
     resource_class: medium
     executor: ruby/default
-    parallelism: 4
+    parallelism: 1
     steps:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
