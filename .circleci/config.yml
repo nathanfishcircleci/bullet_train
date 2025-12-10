@@ -75,7 +75,8 @@ aliases:
           if [ -d "test/reports" ] && [ "$XML_COUNT" -gt 0 ]; then
             echo "Found $XML_COUNT JUnit XML file(s) in test/reports"
             echo "Generating Allure report from JUnit XML..."
-            /tmp/allure-2.24.0/bin/allure generate test/reports --clean -o allure-report
+            /tmp/allure-2.24.0/bin/allure generate test/reports -o allure-report
+            #/tmp/allure-2.24.0/bin/allure generate test/reports --clean -o allure-report
             echo "Report generated. Contents of allure-report:"
             ls -la allure-report/ | head -20 || echo "Report directory is empty"
           else
