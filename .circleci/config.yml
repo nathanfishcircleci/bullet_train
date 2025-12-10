@@ -80,7 +80,6 @@ jobs:
   'Standard Ruby':
     docker:
       - <<: *ruby_node_browsers_docker_image
-    resource_class: docker.medium
     steps:
       - checkout
 
@@ -108,7 +107,6 @@ jobs:
       - <<: *postgres_docker_image
       - image: cimg/redis:6.2.6
     executor: ruby/default
-    resource_class: docker.medium
     parallelism: 1
     steps:
       - checkout
@@ -130,7 +128,6 @@ jobs:
       - <<: *postgres_docker_image
       - image: cimg/redis:6.2.6
     executor: ruby/default
-    resource_class: docker.medium
     parallelism: 4
     steps:
       - browser-tools/install-chrome
@@ -190,7 +187,6 @@ jobs:
       - <<: *postgres_docker_image
       - image: cimg/redis:6.2.6
     executor: ruby/default
-    resource_class: docker.medium
     parallelism: 4
     steps:
       - browser-tools/install-chrome
@@ -251,7 +247,6 @@ jobs:
       - <<: *postgres_docker_image
       - image: cimg/redis:6.2.6
     executor: ruby/default
-    resource_class: docker.medium
     parallelism: 7
     steps:
       - browser-tools/install-chrome
@@ -320,7 +315,6 @@ jobs:
       - <<: *postgres_docker_image
       - image: cimg/redis:6.2.6
     executor: ruby/default
-    resource_class: docker.medium
     parallelism: 4
     steps:
       - browser-tools/install-chrome
@@ -392,7 +386,6 @@ jobs:
       - <<: *postgres_docker_image
       - image: cimg/redis:6.2.6
     executor: ruby/default
-    resource_class: docker.medium
     parallelism: 4
 
     steps:
