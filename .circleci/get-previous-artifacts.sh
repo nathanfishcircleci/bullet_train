@@ -3,11 +3,11 @@
 # Script to download artifacts from the previous CircleCI pipeline run
 # Usage: .circleci/get-previous-artifacts.sh [artifact-path] [output-dir]
 #
-# Example: .circleci/get-previous-artifacts.sh allure-report ./previous-allure-report
+# Example: .circleci/get-previous-artifacts.sh allure-report/history ./previous-artifacts
 
 set -e
 
-ARTIFACT_PATH="${1:-allure-report}"
+ARTIFACT_PATH="${1:-allure-report/history}"
 OUTPUT_DIR="${2:-previous-artifacts}"
 
 # CircleCI API configuration
