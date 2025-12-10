@@ -59,7 +59,7 @@ aliases:
         name: Generate Allure Report from test/reports
         command: |
           export PATH="/tmp/allure-2.24.0/bin:$PATH"
-          XML_COUNT=$(find test/reports -name "*.xml" 2>/dev/null | wc -l | tr -d ' ')
+          XML_COUNT=$(find test/reports -name "*.xml" | wc -l | tr -d ' ')
           if [ -d "test/reports" ] && [ "$XML_COUNT" -gt 0 ]; then
             echo "Found $XML_COUNT JUnit XML file(s) in test/reports"
             echo "Generating Allure report from JUnit XML..."
