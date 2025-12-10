@@ -43,6 +43,17 @@ aliases:
   - &wait_for_docker
       # We run this because the DB might not be available for a while due to a race condition.
       run: dockerize -wait tcp://localhost:5432 -timeout 1m
+  - &install_allure
+      run:
+        name: Install Allure CLI
+        command: |
+          cd /tmp
+          curl -o allure-2.24.0.tgz -Ls https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.24.0/allure-commandline-2.24.0.tgz
+          tar -zxf allure-2.24.0.tgz
+          rm allure-2.24.0.tgz
+          chmod +x allure-2.24.0/bin/allure
+          export PATH="/tmp/allure-2.24.0/bin:$PATH"
+          echo 'export PATH="/tmp/allure-2.24.0/bin:$PATH"' >> $BASH_ENV
 
 jobs:
   'Standard Ruby':
@@ -118,6 +129,9 @@ jobs:
 
       - *wait_for_docker
 
+      # Install Allure CLI
+      - *install_allure
+
       # Create test results directories
       - run:
           name: Create Test Results Directories
@@ -165,6 +179,9 @@ jobs:
       - run: yarn build:css
 
       - *wait_for_docker
+
+      # Install Allure CLI
+      - *install_allure
 
       # Create test results directories
       - run:
@@ -222,6 +239,9 @@ jobs:
 
       - *wait_for_docker
 
+      # Install Allure CLI
+      - *install_allure
+
       # Create test results directories
       - run:
           name: Create Test Results Directories
@@ -268,6 +288,9 @@ jobs:
       - run: yarn build:css
 
       - *wait_for_docker
+
+      # Install Allure CLI
+      - *install_allure
 
       # Create test results directories
       - run:
@@ -328,6 +351,9 @@ jobs:
       - run: yarn build:css
 
       - *wait_for_docker
+
+      # Install Allure CLI
+      - *install_allure
 
       # Create test results directories
       - run:
