@@ -93,6 +93,9 @@ aliases:
   - &store_allure_artifacts
       store_artifacts:
         path: allure-report
+  - &store_coverage_artifacts
+      store_artifacts:
+        path: coverage
 
 jobs:
   'Standard Ruby':
@@ -191,6 +194,9 @@ jobs:
       - *generate_allure_report
       - *store_allure_artifacts
 
+      # Store test coverage report
+      - *store_coverage_artifacts
+
   'Minitest with HIDE_THINGS':
     parameters:
       use-core-repo:
@@ -245,6 +251,9 @@ jobs:
       # Generate and store Allure report
       - *generate_allure_report
       - *store_allure_artifacts
+
+      # Store test coverage report
+      - *store_coverage_artifacts
 
   'Minitest for Super Scaffolding':
     parameters:
@@ -308,6 +317,9 @@ jobs:
       # Generate and store Allure report
       - *generate_allure_report
       - *store_allure_artifacts
+
+      # Store test coverage report
+      - *store_coverage_artifacts
 
   'System Tests with Cuprite':
     parameters:
@@ -374,6 +386,9 @@ jobs:
       - *generate_allure_report
       - *store_allure_artifacts
 
+      # Store test coverage report
+      - *store_coverage_artifacts
+
   # Uncomment the job at the bottom of this file to run these system tests.
   'System Tests for Action Models':
     parameters:
@@ -430,6 +445,9 @@ jobs:
       # Generate and store Allure report
       - *generate_allure_report
       - *store_allure_artifacts
+
+      # Store test coverage report
+      - *store_coverage_artifacts
 
 workflows:
   version: 2.1
