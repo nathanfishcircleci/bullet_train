@@ -460,25 +460,33 @@ workflows:
   version: 2.1
   build:
     jobs:
-      - 'Standard Ruby'
-      - 'Database Schema Check'
+      - 'Standard Ruby':
+          context: Real Contexts
+      - 'Database Schema Check':
+          context: Real Contexts
       - 'Minitest':
           name: 'Core: Minitest'
           use-core-repo: true
+          context: Real Contexts
       - 'Minitest':
           name: 'Release: Minitest'
           use-core-repo: false
+          context: Real Contexts
       - 'Minitest with HIDE_THINGS':
           name: 'Core: Minitest with HIDE_THINGS'
           use-core-repo: true
+          context: Real Contexts
       - 'Minitest with HIDE_THINGS':
           name: 'Release: Minitest with HIDE_THINGS'
           use-core-repo: false
+          context: Real Contexts
       - 'Minitest for Super Scaffolding':
           name: 'Core: Minitest for Super Scaffolding'
           use-core-repo: true
+          context: Real Contexts
       - 'Minitest for Super Scaffolding':
           name: 'Release: Minitest for Super Scaffolding'
           use-core-repo: false
+          context: Real Contexts
       # - 'System Tests with Cuprite'
       # - 'System Tests for Action Models'
