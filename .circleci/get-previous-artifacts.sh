@@ -29,18 +29,27 @@ echo "Artifact path: $ARTIFACT_PATH"
 echo "Output directory: $OUTPUT_DIR"
 echo ""
 
-# Get the current pipeline number
-CURRENT_PIPELINE_NUMBER="${CIRCLE_PIPELINE_NUMBER}"
-echo "Current pipeline number: $CURRENT_PIPELINE_NUMBER"
-
-# Get previous pipeline (one before current)
-PREVIOUS_PIPELINE_NUMBER=$((CURRENT_PIPELINE_NUMBER - 1))
-echo "Looking for previous pipeline number: $PREVIOUS_PIPELINE_NUMBER"
-
 # Get list of pipelines for this branch
 echo "Fetching pipelines for branch: $BRANCH"
 PIPELINES_RESPONSE=$(curl -s -u "${CIRCLECI_TOKEN}:" \
   "${CIRCLE_API_URL}/project/${PROJECT_SLUG}/pipeline?branch=${BRANCH}")
+
+# Get the current pipeline number from API (most recent pipeline is the first in the list)
+CURRENT_PIPELINE_NUMBER=$(echo "$PIPELINES_RESPONSE" | jq -r ".items[0].number")
+CURRENT_PIPELINE_ID=$(echo "$PIPELINES_RESPONSE" | jq -r ".items[0].id")
+
+if [ -z "$CURRENT_PIPELINE_NUMBER" ] || [ "$CURRENT_PIPELINE_NUMBER" = "null" ]; then
+  echo "ERROR: Could not determine current pipeline number from API"
+  exit 1
+fi
+
+echo "Current pipeline number: $CURRENT_PIPELINE_NUMBER"
+echo "Current pipeline ID: $CURRENT_PIPELINE_ID"
+echo ""
+
+# Get previous pipeline (one before current)
+PREVIOUS_PIPELINE_NUMBER=$((CURRENT_PIPELINE_NUMBER - 1))
+echo "Looking for previous pipeline number: $PREVIOUS_PIPELINE_NUMBER"
 
 # Find the previous pipeline
 PREVIOUS_PIPELINE_ID=$(echo "$PIPELINES_RESPONSE" | \
