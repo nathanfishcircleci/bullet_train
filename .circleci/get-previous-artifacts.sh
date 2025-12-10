@@ -16,8 +16,8 @@ PROJECT_SLUG="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
 BRANCH="${CIRCLE_BRANCH:-main}"
 
 # Check if API token is set
-if [ -z "$CIRCLE_TOKEN" ]; then
-  echo "ERROR: CIRCLE_TOKEN environment variable is not set"
+if [ -z "$CIRCLECI_TOKEN" ]; then
+  echo "ERROR: CIRCLECI_TOKEN environment variable is not set"
   echo "Set it in CircleCI project settings or as a context variable"
   exit 1
 fi
@@ -39,7 +39,7 @@ echo "Looking for previous pipeline number: $PREVIOUS_PIPELINE_NUMBER"
 
 # Get list of pipelines for this branch
 echo "Fetching pipelines for branch: $BRANCH"
-PIPELINES_RESPONSE=$(curl -s -u "${CIRCLE_TOKEN}:" \
+PIPELINES_RESPONSE=$(curl -s -u "${CIRCLECI_TOKEN}:" \
   "${CIRCLE_API_URL}/project/${PROJECT_SLUG}/pipeline?branch=${BRANCH}")
 
 # Find the previous pipeline
@@ -69,7 +69,7 @@ echo ""
 
 # Get workflows for the previous pipeline
 echo "Fetching workflows for previous pipeline..."
-WORKFLOWS_RESPONSE=$(curl -s -u "${CIRCLE_TOKEN}:" \
+WORKFLOWS_RESPONSE=$(curl -s -u "${CIRCLECI_TOKEN}:" \
   "${CIRCLE_API_URL}/pipeline/${PREVIOUS_PIPELINE_ID}/workflow")
 
 # Get the first workflow ID (usually there's one main workflow)
@@ -85,7 +85,7 @@ echo ""
 
 # Get jobs for the workflow
 echo "Fetching jobs for workflow..."
-JOBS_RESPONSE=$(curl -s -u "${CIRCLE_TOKEN}:" \
+JOBS_RESPONSE=$(curl -s -u "${CIRCLECI_TOKEN}:" \
   "${CIRCLE_API_URL}/workflow/${WORKFLOW_ID}/job")
 
 # Get all job numbers
@@ -109,7 +109,7 @@ for JOB_NUMBER in $JOB_NUMBERS; do
   echo "Checking artifacts for job #${JOB_NUMBER}..."
   
   # Get artifacts for this job
-  ARTIFACTS_RESPONSE=$(curl -s -u "${CIRCLE_TOKEN}:" \
+  ARTIFACTS_RESPONSE=$(curl -s -u "${CIRCLECI_TOKEN}:" \
     "${CIRCLE_API_URL}/project/${PROJECT_SLUG}/${JOB_NUMBER}/artifacts")
   
   # Find artifacts matching the path
@@ -133,7 +133,7 @@ for JOB_NUMBER in $JOB_NUMBERS; do
       echo "  To: $OUTPUT_PATH"
       
       # Download the artifact
-      curl -s -u "${CIRCLE_TOKEN}:" -o "$OUTPUT_PATH" "$ARTIFACT_URL"
+      curl -s -u "${CIRCLECI_TOKEN}:" -o "$OUTPUT_PATH" "$ARTIFACT_URL"
       
       if [ -f "$OUTPUT_PATH" ]; then
         echo "  ✓ Downloaded successfully ($(du -h "$OUTPUT_PATH" | cut -f1))"
@@ -150,7 +150,7 @@ if [ $ARTIFACTS_FOUND -eq 0 ]; then
   echo "WARNING: No artifacts found matching path '${ARTIFACT_PATH}'"
   echo "Available artifact paths from previous pipeline:"
   for JOB_NUMBER in $JOB_NUMBERS; do
-    ARTIFACTS_RESPONSE=$(curl -s -u "${CIRCLE_TOKEN}:" \
+    ARTIFACTS_RESPONSE=$(curl -s -u "${CIRCLECI_TOKEN}:" \
       "${CIRCLE_API_URL}/project/${PROJECT_SLUG}/${JOB_NUMBER}/artifacts")
     echo "$ARTIFACTS_RESPONSE" | jq -r ".items[].path" | head -10
   done
