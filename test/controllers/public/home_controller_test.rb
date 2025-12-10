@@ -35,6 +35,6 @@ class Public::HomeControllerTest < ActionDispatch::IntegrationTest
     get "/docs"
 
     # Should either serve documentation or redirect appropriately
-    assert_response :success
+    assert_includes [200, 301, 302, 303, 307, 308], response.status, "Expected success or redirect response"
   end
 end
