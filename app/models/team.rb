@@ -7,6 +7,7 @@ class Team < ApplicationRecord
 
   # 🚅 add has_many associations above.
 
+  has_many :integrations_stripe_installations, class_name: "Integrations::StripeInstallation", dependent: :destroy
   # 🚅 add oauth providers above.
 
   # 🚅 add has_one associations above.
