@@ -113,8 +113,9 @@ class MembershipSystemTest < ApplicationSystemTestCase
     within_former_memberships_table do
       assert_text("Yuto Nishiyama")
       assert_text("Viewer")
-      accept_alert { click_on "Re-Invite to Team" }
     end
+
+    accept_confirm { click_on "Re-Invite to Team" }
 
     assert_text("The user has been successfully re-invited. They will receive an email to rejoin the team.")
 
