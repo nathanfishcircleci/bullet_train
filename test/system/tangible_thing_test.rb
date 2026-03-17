@@ -56,14 +56,8 @@ class TangibleThingTest < ApplicationSystemTestCase
     click_on "Three"
     click_on "Four"
     click_on "Five"
-    page.all('input[id^="scaffolding_completely_concrete_tangible_thing_date_field_value"]').each do |el|
-      el.click
-    end
-    find(".daterangepicker").click_on("Apply")
-    page.all('input[id^="scaffolding_completely_concrete_tangible_thing_date_and_time_field_value"]').each do |el|
-      el.click
-    end
-    find(".daterangepicker").click_on("Apply")
+    fill_in "Date Field Value", with: "01/01/2024"
+    fill_in "Date and Time Field Value", with: "01/01/2024 12:00 PM"
     fill_in "Email Field Value", with: "me@acme.com"
     fill_in "Password Field Value", with: "secure-password"
     fill_in "Phone Field Value", with: "(201) 551-8321"
