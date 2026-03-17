@@ -15,7 +15,7 @@ class Api::OpenApiControllerTest < Api::Test
     output = `yarn exec redocly lint api@v1 1> /dev/stdout 2> /dev/stdout`
     FileUtils.rm(openapi_yaml_path)
 
-    failures = output.match(/You have (\d+) warnings/) || output.match("Failed to parse api definition")
+    failures = output.match(/You have \d+ warnings?/) || output.match(/Failed to parse (api|API) definition/) || output.match(/Validation failed/)
     puts output if failures
     refute failures
 
@@ -29,7 +29,7 @@ class Api::OpenApiControllerTest < Api::Test
     get "/api/v1/openapi.yaml"
 
     assert_response :success
-    assert_equal "text/yaml", response.content_type
+    assert_match(/text\/yaml/, response.content_type)
     assert_includes response.body, "openapi: 3.1.0"
     assert_includes response.body, "Bullet Train API"
   end

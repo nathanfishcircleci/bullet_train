@@ -11,6 +11,7 @@ class Api::V1::OpenApiController < ApplicationController
       paths:
         /:
           get:
+            operationId: getApiRoot
             summary: API Root
             responses:
               '200':
