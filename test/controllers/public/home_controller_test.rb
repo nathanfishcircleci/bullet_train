@@ -29,5 +29,4 @@ class Public::HomeControllerTest < ActionDispatch::IntegrationTest
     # Should redirect to sign in or invitation page
     assert_response :redirect
   end
-
 end
