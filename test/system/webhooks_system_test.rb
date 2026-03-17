@@ -6,12 +6,12 @@ class WebhooksSystemTest < ApplicationSystemTestCase
   setup do
     @user = create :onboarded_user, first_name: "Andrew", last_name: "Culver"
     @another_user = create :onboarded_user, first_name: "John", last_name: "Smith"
+    @original_hide_things = ENV["HIDE_THINGS"]
     return unless Rails.configuration.respond_to?(:outgoing_webhooks)
 
     Rails.configuration.outgoing_webhooks[:allowed_hostnames] = [URI.parse(Capybara.app_host).host]
     Rails.configuration.outgoing_webhooks[:blocked_hostnames] = []
 
-    @original_hide_things = ENV["HIDE_THINGS"]
     ENV["HIDE_THINGS"] = "false"
     Rails.application.reload_routes!
   end
