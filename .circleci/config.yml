@@ -54,18 +54,6 @@ aliases:
           chmod +x allure-2.24.0/bin/allure
           export PATH="/tmp/allure-2.24.0/bin:$PATH"
           echo 'export PATH="/tmp/allure-2.24.0/bin:$PATH"' >> $BASH_ENV
-  - &copy_allure_report_history_from_previous_pipeline
-      run:
-        name: Copy Allure Report History from Previous Pipeline
-        command: |
-          if [ -d "previous-artifacts/allure-report/history" ]; then
-            mkdir -p allure-report/history
-            cp -r previous-artifacts/allure-report/history/. test/reports/history/
-            echo "Copied Allure report history from previous pipeline"
-          else
-            echo "No previous Allure report history found, skipping copy"
-          fi
-        when: always
   - &generate_allure_report
       run:
         name: Generate Allure Report from test/reports
@@ -81,12 +69,6 @@ aliases:
           else
             echo "No JUnit XML files found in test/reports (found: $XML_COUNT), skipping report generation"
           fi
-        when: always
-  - &get_previous_artifacts
-      run:
-        name: Get previous artifacts
-        command: |
-          .circleci/get-previous-artifacts.sh
         when: always
   - &store_allure_artifacts
       store_artifacts:
@@ -191,12 +173,6 @@ jobs:
 
       - store_test_results:
           path: test/reports
-
-      # Get previous artifacts
-      - *get_previous_artifacts
-
-      # Copy Allure Report History from Previous Pipeline
-      - *copy_allure_report_history_from_previous_pipeline  
 
       # Generate and store Allure report
       - *generate_allure_report
